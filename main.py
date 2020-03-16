@@ -45,12 +45,11 @@ class Tcl:
 
 
 
-
-t = Tcl('tclsh')
-out, err, code = t.eval(r"putaas {hello}")
-print(out, err, code)
-for i in range(0, 1000):
-    out, err, code = t.eval(r"puts {hello}")
-    print("out:%s\n" % out, "err:%s\n" % err, code)
+if __name__ == '__main__':
+    t = Tcl('tclsh')
+    print('--expecting error---')
     out, err, code = t.eval(r"putaas {hello}")
-    print("out:%s\n" % out, "err:%s\n" % err, code)
+    print("out:%s\nerr:%s\ncode:%d\n" % (out, err, code))
+    print('--expecting hello---')
+    out, err, code = t.eval(r"puts {hello}")
+    print("out:%s\nerr:%s\ncode:%d\n" % (out, err, code))
