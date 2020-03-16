@@ -5,22 +5,24 @@ import sys
 
 def read_until(f, c):
     res = bytearray()
-    more = f.read1()
+    max_read = 256
+    more = f.read1(max_read)
     while len(more) > 0:
         for i in range(0, len(more)):
             if more[i] == 0:
                 res.extend(more[0:i])
                 return res, more[i+1:]
         res.extend(more)
-        more = f.read1()
+        more = f.read1(max_read)
     eof = f.read()
     raise RuntimeError('ending symbol not found in %s!' % more)
     
 
 
-class Tclsh:
-    def __init__(self, shell_fname, script_name):
-        self.proc = subprocess.Popen([shell_fname, script_name], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+class Tcl:
+    def __init__(self, shell_fname):
+        proxy_script = os.path.join(os.path.dirname(__file__), 'main.tcl')
+        self.proc = subprocess.Popen([shell_fname, proxy_script], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def close(self):
         self.proc.stdin.close()
@@ -44,8 +46,7 @@ class Tclsh:
 
 
 
-
-t = Tclsh('tclsh', './main.tcl')
+t = Tcl('tclsh')
 out, err, code = t.eval(r"putaas {hello}")
 print(out, err, code)
 for i in range(0, 1000):
